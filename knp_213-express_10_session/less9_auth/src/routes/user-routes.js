@@ -1,13 +1,14 @@
 import { Router } from "express";
-import bcrypt from "bcrypt";
 import { createUser } from "../middlewars/createuser-middleware.js";
 import { users } from "../data/users.js";
 import { authUser } from "../middlewars/authuser-middleware.js";
+import { validateUnauthenticated } from "../middlewars/validate-unauthenticated-middleware.js";
+import { validateAuthenticated } from "../middlewars/validate-authenticated-middleware.js";
 
 const userRoutes = Router();
 userRoutes
   .route("/signin")
-  .get((req, res) => {
+  .get(validateUnauthenticated, (req, res) => {
     res.render("form_auth");
   })
   .post(authUser, (req, res) => {
@@ -25,10 +26,10 @@ userRoutes.get("/", (req, res) => {
 
 userRoutes
   .route("/signup")
-  .get((req, res) => {
+  .get(validateUnauthenticated, (req, res) => {
     res.render("form_register");
   })
-  .post(createUser, (req, res) => {
+  .post(validateUnauthenticated, createUser, (req, res) => {
     //#region comments
     //TODO: валідація даних
     /*
@@ -51,7 +52,7 @@ userRoutes
     };
     res.redirect("/");
   });
-userRoutes.get("/logout", (req, res) => {
+userRoutes.get("/logout", validateAuthenticated, (req, res) => {
   req.session.destroy();
   res.redirect("/");
 });
