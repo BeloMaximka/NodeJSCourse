@@ -8,6 +8,7 @@ import siteRoutes from "./routes/site-routes.js";
 import userRoutes from "./routes/user-routes.js";
 import checkUser from "./middlewars/checkuser-middleware.js";
 import bodyParser from "body-parser";
+import newsletterRoutes from "./routes/newsletter-routes.js";
 const PORT = process.env.PORT || 3000;
 //#region options for hbs
 const hbs = exphbs.create({
@@ -43,6 +44,7 @@ server.set("views", path.join("src", "views"));
 server.use(express.static("public"));
 
 server.use(siteRoutes);
+server.use(newsletterRoutes);
 server.use("/user", userRoutes);
 server.listen(PORT, () =>
   console.log(`Server is running http://localhost:${PORT}`)
