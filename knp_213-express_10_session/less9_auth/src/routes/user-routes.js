@@ -4,6 +4,7 @@ import { users } from "../data/users.js";
 import { authUser } from "../middlewars/authuser-middleware.js";
 import { validateUnauthenticated } from "../middlewars/validate-unauthenticated-middleware.js";
 import { validateAuthenticated } from "../middlewars/validate-authenticated-middleware.js";
+import multer from "multer";
 
 const userRoutes = Router();
 userRoutes
@@ -15,6 +16,7 @@ userRoutes
     req.session.user = {
       login: req.body.login,
       email: req.body.email,
+      avatar: req.file.filename
     };
     res.redirect("/");
   });
@@ -24,12 +26,13 @@ userRoutes.get("/", (req, res) => {
   res.end();
 });
 
+const upload = multer({ dest: './public/image-uploads/' })
 userRoutes
   .route("/signup")
   .get(validateUnauthenticated, (req, res) => {
     res.render("form_register");
   })
-  .post(validateUnauthenticated, createUser, (req, res) => {
+  .post(upload.single("avatar"), validateUnauthenticated, createUser, (req, res) => {
     //#region comments
     //TODO: валідація даних
     /*
@@ -49,7 +52,9 @@ userRoutes
     req.session.user = {
       login: req.body.login,
       email: req.body.email,
+      avatar: req.file.filename
     };
+    console.log(req.file.filename);
     res.redirect("/");
   });
 userRoutes.get("/logout", validateAuthenticated, (req, res) => {

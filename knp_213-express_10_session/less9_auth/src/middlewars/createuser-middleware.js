@@ -9,6 +9,7 @@ export const createUser = (req, res, next) => {
       login: login,
       email: email,
       password: bcrypt.hashSync(password, 10),
+      avatar: req.file.filename
     });
     next();
     return;
