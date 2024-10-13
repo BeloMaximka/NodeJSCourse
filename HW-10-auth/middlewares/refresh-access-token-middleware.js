@@ -1,3 +1,4 @@
+import { sendRefreshAndAccessTokens } from "../functions/sendRefreshAndAccessTokens.js";
 import { signJwt } from "../functions/signJwt.js";
 import { verifyJwt } from "../functions/verifyJwt.js";
 
@@ -11,14 +12,8 @@ export async function refreshAccessToken(req, res) {
   try {
     const refreshToken = req.cookies["refresh_token"];
     await verifyJwt(refreshToken, jwtRefreshSecret);
-
-    const oneHourExpiration = Math.floor(Date.now() / 1000) + 60 * 60;
-    const token = await signJwt(
-      { email: req.user.email, exp: oneHourExpiration },
-      jwtRefreshSecret
-    );
-    res.send({ token });
+    await sendRefreshAndAccessTokens(res, req.user);
   } catch (error) {
-    res.sendStatus(503);
+    res.sendStatus(403);
   }
 }
